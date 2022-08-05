@@ -21,7 +21,8 @@ menu = data
 # 형태소 분석 및 의도파악
 tagger = Mecab()
 sentence = input("sentence > ")
-# print(tagger.morphs(sentence))
+print(tagger.morphs(sentence))
+print(tagger.nouns(sentence))
 
 for i in tagger.morphs(sentence):
     if i in search:
