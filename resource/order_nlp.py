@@ -14,9 +14,7 @@ with open("resource/menu-table.json", "r") as f:
     data = json.load(f)
 f.close
 
-menu = data
-# print(utils.find_value(menu, "101"))
-# print(utils.find_key(menu, "더블 치즈버거"))
+menu_dict = data
 
 # 형태소 분석 및 의도파악
 tagger = Mecab()
@@ -29,6 +27,17 @@ for i in tagger.morphs(sentence):
         print(sentence, ": 메뉴 검색")
     if i in order:
         print(sentence, ": 메뉴 주문")
+
+for menu in tagger.nouns(sentence):
+    if menu != "버거":
+        menu_list = utils.find_menu(menu_dict, menu)
+        if len(menu_list) > 1:
+            print("다음의 메뉴 중 선택: ", [utils.find_value(
+                menu_dict, k) for k in menu_list.keys()])
+        elif len(menu_list) == 1:
+            print("다음의 메뉴 추가: ", menu_list)
+        else:
+            print("error: 메뉴 없음")
 
 # 주문 딕셔너리 생성
 my_order = {}
