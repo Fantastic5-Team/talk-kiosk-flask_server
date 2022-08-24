@@ -43,8 +43,9 @@ def main():
     # print(tagger.nouns(sentence))
     # add_menu(sentence)
     #conflict_processing(sentence)
-    select_option(sentence)
+    #select_option(sentence)
     #conflict_menu_select(sentence)
+    set_check(sentence)
 
     #print(my_order)
     
@@ -135,16 +136,18 @@ def conflict_processing(sentence):
 def select_option(sentence):
     opt_select={}
     opt_select["option"]=[]
-    if sentence == '아니오' or sentence=='다음':
-        opt_select["code"]=[1007]
+    for v in tagger.morphs(sentence):
+        if(v =='아니' or v=='다음'):
+            opt_select["code"]=2004
     else:
         for v in opt_dict.values():
             if v in sentence:
                 opt_select["option"].append(utils.find_key(opt_dict,v))
-                opt_select["code"]=[1006]
+                opt_select["code"]=2003
     if "code" not in opt_select:
-        opt_select["code"]=[1002]
+        opt_select["code"]=1002
     print(opt_select)
+    # return opt_select
 
 def conflict_menu_select(sentence):
     second_menuchoice={}
@@ -152,5 +155,32 @@ def conflict_menu_select(sentence):
         if v in sentence:  # 메뉴 딕셔너리에 있는 메뉴가 문장에 있으면
             second_menuchoice[utils.find_key(menu_dict, v)] = v.replace(" ", "")  # 메뉴명에서 공백 삭제
             print(v)
+
+def set_check(sentence):
+    my_set={"set":[201,301],"code":{}}
+
+    for v in tagger.morphs(sentence):
+        if(v =='아니' or v=='다음'):
+            my_set["code"]=2006
+
+    for k ,v in menu_dict.items():
+        
+        if v in sentence:
+            # print(k,v)
+            
+            if int(k) < 200:
+                continue
+            elif int(k) < 300:
+                my_set["set"][0]=int(k)
+                my_set["code"]=2006
+            else:
+                if(my_set["code"]==2006):
+                    print("Warning")
+                    my_set["code"]=2007
+                    break
+                my_set["set"][1]=int(k)
+                my_set["code"]=2006
+
+    print(my_set)
 
 main()
