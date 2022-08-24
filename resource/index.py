@@ -18,3 +18,9 @@ def post_nlp_order():
     data = request.get_json()
     print(data)
     return jsonify(data)
+
+@app.route('/nlp/option',methods=['POST'])
+def post_nlp_option():
+    data = request.get_json()
+    print(data)
+    return jsonify(data)
