@@ -5,7 +5,7 @@ import utils
 tagger = Mecab()
 
 # 주문 딕셔너리 생성
-my_order = {"ordered": {"menu": []}}
+my_order = {"ordered": {"menu": []} ,"situation":{}}
 
 # 메뉴 주문 리스트
 order_menu_list = []
@@ -29,12 +29,25 @@ f.close
 
 num_dict = data
 
+with open("/home/workspace/talk-kiosk-flask_server/json/option-sel.json","r") as f:
+    data = json.load(f)
+f.close
+
+opt_dict = data
+
 
 def main():
 
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
-    add_menu(sentence)
+    # print(tagger.nouns(sentence))
+    # add_menu(sentence)
+    #conflict_processing(sentence)
+    select_option(sentence)
+    #conflict_menu_select(sentence)
+
+    #print(my_order)
+    
 
 
 # 메뉴 추가 함수
@@ -111,10 +124,33 @@ def conflict_processing(sentence):
             if len(menu_list) > 1:
                 print("다음의 메뉴 중 선택: ", [utils.find_value(
                     menu_dict, k) for k in menu_list.keys()])
+                my_order["situation"]="2002" #situation 2002
+                print(my_order)
+                    
             elif len(menu_list) == 1:
                 print("다음의 메뉴 추가: ", menu_list)
             else:
                 print("error: 메뉴 없음")
 
+def select_option(sentence):
+    opt_select={}
+    opt_select["option"]=[]
+    if sentence == '아니오' or sentence=='다음':
+        opt_select["code"]=[1007]
+    else:
+        for v in opt_dict.values():
+            if v in sentence:
+                opt_select["option"].append(utils.find_key(opt_dict,v))
+                opt_select["code"]=[1006]
+    if "code" not in opt_select:
+        opt_select["code"]=[1002]
+    print(opt_select)
+
+def conflict_menu_select(sentence):
+    second_menuchoice={}
+    for k, v in menu_dict.items():
+        if v in sentence:  # 메뉴 딕셔너리에 있는 메뉴가 문장에 있으면
+            second_menuchoice[utils.find_key(menu_dict, v)] = v.replace(" ", "")  # 메뉴명에서 공백 삭제
+            print(v)
 
 main()
