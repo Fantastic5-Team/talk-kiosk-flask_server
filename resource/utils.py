@@ -40,8 +40,8 @@ def exist_key_value_list(_dict, _value):
 
 
 def find_menu(_dict, _value):
-    result = {}
+    result = []
     for k, v in _dict.items():
         if _value in v:
-            result[k] = v
+            result.append(k)
     return result

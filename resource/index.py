@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify
-import tensorflow as tf
-
-print(tf.__version__)
+import order_nlp as nlp
 
 app = Flask(__name__)
 
@@ -18,3 +16,15 @@ def post_nlp_order():
     data = request.get_json()
     print(data)
     return jsonify(data)
+
+
+@app.route('/option', methods=['POST'])
+def post_nlp_option():
+    data = request.get_json()
+    print(data)
+    result = nlp.set_check(data("text"), data("set"))
+    return jsonify(result)
+
+
+if __name__ == "__main__":
+    app.run()

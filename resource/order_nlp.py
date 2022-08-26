@@ -4,12 +4,6 @@ import utils
 
 tagger = Mecab()
 
-# 주문 딕셔너리 생성
-my_order = {"ordered": {"menu": []}}
-
-# 메뉴 주문 리스트
-order_menu_list = []
-
 # json 파일 불러오기
 with open("/home/workspace/talk-kiosk-flask_server/json/intent.json", "r") as f:
     data = json.load(f)
@@ -29,92 +23,167 @@ f.close
 
 num_dict = data
 
+with open("/home/workspace/talk-kiosk-flask_server/json/option-sel.json", "r") as f:
+    data = json.load(f)
+f.close
 
-def main():
+opt_dict = data
 
-    sentence = input("sentence > ")
-    print(tagger.pos(sentence))
-    add_menu(sentence)
+# api 1 :메뉴 추가 함수
 
 
-# 메뉴 추가 함수
 def add_menu(sentence):
-    menu_id_dict = {}  # {id:메뉴명}
+    try:
+        result_dict = {"order_list": [], "code": ""}
 
-    for k, v in menu_dict.items():
-        if v in sentence:  # 메뉴 딕셔너리에 있는 메뉴가 문장에 있으면
-            menu_id_dict[utils.find_key(menu_dict, v)] = v.replace(
-                " ", "")  # 메뉴명에서 공백 삭제
+        if sentence == "아니오" or sentence == "다음":
+            result_dict["code"] = 2001
+        elif sentence == "":
+            result_dict["code"] = 1002
+        else:
+            temp_string = ""
 
-    # 메뉴 문자열
-    temp_menu_string = ""
+            for word in tagger.pos(sentence):
+                if word[1] == "NNG":
+                    temp_string = temp_string + word[0]
+                    menu_id = utils.find_key(menu_dict, temp_string)
 
-    for word in tagger.pos(sentence):
-        if word[1] == "NNG":
-            temp_menu_string = temp_menu_string + word[0]
-        elif word[1] == "NR":
-            count_num = int(utils.find_key_value_list(num_dict, word[0]))
-            menu_num_dict(menu_id_dict, temp_menu_string, count_num)
-            temp_menu_string = ""
-        elif word[1] == "SN":
-            count = int(word[0])
-        elif utils.exist_key_value_list(num_dict, word[0]):
-            count = int(utils.find_key_value_list(num_dict, word[0]))
-        elif word[0] == "개":
-            menu_num_dict(menu_id_dict, temp_menu_string, count)
-            temp_menu_string = ""
+                    if menu_id != None:
+                        conflict_menu_list = utils.find_menu(
+                            menu_dict, temp_string)
+                        result_dict["order_list"].append(
+                            {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
+                        temp_string = ""
 
-    # 수량이 언급 안 된 메뉴들을 하나씩 추가한다.
-    if len(temp_menu_string) != 0:
-        for k, v in menu_id_dict.items():
-            if v in temp_menu_string:
-                insert_in_menu_dict(k)
+                    if temp_string == "라지세트" or temp_string == "세트라지":
+                        result_dict["order_list"][-1]["set"] = [202, 302]
+                        temp_string = ""
+                    elif "세트" in temp_string and len(temp_string) != 2:
+                        result_dict["order_list"][-1]["set"] = [201, 301]
+                        temp_string = temp_string.replace("세트", "")
 
-    # ordered 객체 menu 의 value로 추가
-    ordered = my_order["ordered"]
-    ordered["menu"] = order_menu_list
+                elif word[1] == "NR":
+                    count_num = int(
+                        utils.find_key_value_list(num_dict, word[0]))
+                    result_dict["order_list"][-1]["qty"] = count_num
+                elif word[1] == "SN":
+                    count = int(word[0])
+                elif utils.exist_key_value_list(num_dict, word[0]):
+                    count = int(utils.find_key_value_list(num_dict, word[0]))
+                elif word[0] == "개":
+                    result_dict["order_list"][-1]["qty"] = count
 
-    print(menu_id_dict)
-    print(my_order)
+            if temp_string == "세트":
+                result_dict["order_list"][-1]["set"] = [201, 301]
 
-
-def menu_num_dict(menu_id_dict, temp_menu_string, count):
-    # 메뉴 순서 딕셔너리 {id : temp_menu_string에서 위치}
-    menu_sequence_dict = {}
-
-    for k, v in menu_id_dict.items():
-        menu_sequence_dict[k] = temp_menu_string.find(v)
-
-    plural_menu = max(menu_sequence_dict,
-                      key=menu_sequence_dict.get)
-
-    for k, v in menu_sequence_dict.items():
-        if v != -1:
-            if k == plural_menu:
-                for num in range(count):
-                    insert_in_menu_dict(k)
+            if result_dict["order_list"] != []:
+                result_dict["code"] = 1001
             else:
-                insert_in_menu_dict(k)
+                result_dict["code"] = 1002
+
+        print(result_dict)
+    except:
+        return {"order_list": [], "code": 1002}
 
 
-# 새로운 메뉴 딕셔너리 생성
-def insert_in_menu_dict(id):
-    menu_dictionary = {"id": id}  # 메뉴별 딕셔너리
-    order_menu_list.append(menu_dictionary)
+# API NO.2 여러 메뉴 중 하나 선택
+def conflict_menu_select(sentence, conflict_list):
+    try:
+        temp_string = ""
+        for word in tagger.pos(sentence):
+            if word[1] == "NNG":
+                temp_string = temp_string + word[0]
+                menu_id = utils.find_key(menu_dict, temp_string)
+            elif word[1] == "SN":
+                menu_id = conflict_list[int(word[0]) - 1]
+
+        if int(menu_id) in conflict_list:
+            return {"resolve": int(menu_id), "code": 2002}
+        else:
+            return {"resolve": int(menu_id), "code": "메뉴리스트에 없음"}
+    except:
+        return {"resolve": "", "code": 1002}
 
 
-# 해당 단어가 들어간 메뉴들 출력 함수
-def conflict_processing(sentence):
-    for menu in tagger.nouns(sentence):
-        if menu != "버거":
-            menu_list = utils.find_menu(menu_dict, menu)
-            if len(menu_list) > 1:
-                print("다음의 메뉴 중 선택: ", [utils.find_value(
-                    menu_dict, k) for k in menu_list.keys()])
-            elif len(menu_list) == 1:
-                print("다음의 메뉴 추가: ", menu_list)
-            else:
-                print("error: 메뉴 없음")
+# API NO.3 옵션 선택
+def select_option(sentence):
+    try:
+        opt_select = {}
+        opt_select["option"] = []
+        for v in tagger.morphs(sentence):
+            if(v == '아니' or v == '다음'):
+                opt_select["code"] = 2004
+        else:
+            for v in opt_dict.values():
+                if v in sentence:
+                    opt_select["option"].append(utils.find_key(opt_dict, v))
+                    opt_select["code"] = 2003
+        if "code" not in opt_select:
+            opt_select["code"] = 1002
+        print(opt_select)
+        return opt_select
+    except:
+        return {"option": [], "code": 1002}
 
 
-main()
+# API NO.4 세트 메뉴 선택
+# 선택을 안할 경우 2006, 세트 선택시
+
+
+def set_check(sentence):
+    try:
+        my_set = {"set": [201, 301], "code": {}}
+
+        temp = []
+        a = 0
+        b = 0
+
+        for v in tagger.morphs(sentence):
+            if(v == '아니' or v == '다음'):
+                my_set["code"] = 2006
+
+        for k, v in menu_dict.items():
+
+            if v in sentence:
+                # print(k,v)
+
+                if int(k) < 200:
+                    continue
+                elif int(k) < 300:
+                    temp.append(int(k))
+                else:
+                    temp.append(int(k))
+
+        # 사이드 메뉴와 음료의 갯수의 입력을 확인한다.
+        for i in temp:
+            if i//100 == 2:
+                a += 1
+            elif i//100 == 3:
+                b += 1
+
+        if(a >= 2 or b >= 2):
+            my_set["code"] = 2007
+        else:
+            my_set["code"] = 2005
+            for i in temp:
+                if i//100 == 2:
+                    my_set["set"][0] = i
+                elif i//100 == 3:
+                    my_set["set"][1] = i
+
+        print(my_set)
+        return my_set
+
+    except:
+        return {"set": [], "code": 1002}
+
+# def main():
+
+    #sentence = input("sentence > ")
+    # print(tagger.pos(sentence))
+    #confilct_list = [106, 107, 108]
+    # add_menu(sentence)
+    #print(conflict_menu_select(sentence, confilct_list))
+    # select_option(sentence)
+
+# main()
