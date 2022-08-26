@@ -36,12 +36,12 @@ def exist_key_value_list(_dict, _value):
             return True
     return False
 
-# 키워드가 포한된 메뉴 딕셔너리 반환
+# 키워드가 포함된 메뉴 딕셔너리 반환
 
 
 def find_menu(_dict, _value):
     result = []
     for k, v in _dict.items():
         if _value in v:
-            result.append(k)
+            result[k] = v
     return result

@@ -23,6 +23,7 @@ def post_nlp_option():
     data = request.get_json()
     print(data)
     result = nlp.set_check(data("text"), data("set"))
+
     return jsonify(result)
 
 
