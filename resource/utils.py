@@ -43,5 +43,5 @@ def find_menu(_dict, _value):
     result = []
     for k, v in _dict.items():
         if _value in v:
-            result[k] = v
+            result.append(k)
     return result
