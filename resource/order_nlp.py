@@ -81,7 +81,7 @@ def add_menu(sentence):
             else:
                 result_dict["code"] = 1002
 
-        print(result_dict)
+        return result_dict
     except:
         return {"order_list": [], "code": 1002}
 
@@ -177,13 +177,15 @@ def set_check(sentence):
     except:
         return {"set": [], "code": 1002}
 
+
 # def main():
 
     #sentence = input("sentence > ")
     # print(tagger.pos(sentence))
     #confilct_list = [106, 107, 108]
-    # add_menu(sentence)
+    # print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
+
 
 # main()
