@@ -47,7 +47,6 @@ def add_menu(sentence):
                 if word[1] == "NNG":
                     temp_string = temp_string + word[0]
                     menu_id = utils.find_key(menu_dict, temp_string)
-
                     if menu_id != None:
                         conflict_menu_list = utils.find_menu(
                             menu_dict, temp_string)
@@ -100,7 +99,7 @@ def conflict_menu_select(sentence, conflict_list):
         if int(menu_id) in conflict_list:
             return {"resolve": int(menu_id), "code": 2002}
         else:
-            return {"resolve": int(menu_id), "code": "메뉴리스트에 없음"}
+            return {"resolve": int(menu_id), "code": 2009}
     except:
         return {"resolve": "", "code": 1002}
 
@@ -178,14 +177,14 @@ def set_check(sentence):
         return {"set": [], "code": 1002}
 
 
-# def main():
+def main():
 
-    #sentence = input("sentence > ")
-    # print(tagger.pos(sentence))
-    #confilct_list = [106, 107, 108]
+    sentence = input("sentence > ")
+    print(tagger.pos(sentence))
+    confilct_list = [106, 107, 108]
     # print(add_menu(sentence))
-    #print(conflict_menu_select(sentence, confilct_list))
+    print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
 
 
-# main()
+main()
