@@ -126,8 +126,8 @@ def select_option(sentence):
 
 # API NO.4 세트 메뉴 선택
 # 선택을 안할 경우 2006, 세트 선택
-def set_check(sentence):
-    my_set={"set":[201,301],"code":{}}
+def set_check(sentence, set):
+    my_set={"set":set, "code":{}}
     temp=[]
     a=0
     b=0
