@@ -159,7 +159,7 @@ def set_check(sentence, set):
             elif i//100 ==3:
                 my_set["set"][1]=i
 
-    if type(my_set["code"]) is dict: #분석 실패
+    else:
         my_set["code"]=1002
 
     return my_set
