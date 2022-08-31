@@ -11,21 +11,36 @@ app = Flask(__name__)
 # 바디 전달법
 
 
-@app.route('/nlp/order', methods=['POST'])
+@app.route('/order', methods=['POST'])
 def post_nlp_order():
     data = request.get_json()
-    print(data)
-    return jsonify(data)
+    result = nlp.add_menu(data["text"])
+    print(result)
+    return jsonify(result)
+
+
+@app.route('/order/conflict', methods=['POST'])
+def post_nlp_order_conflict():
+    data = request.get_json()
+    print("text:", data["text"], "menu_id:", data["menu_id"])
+    result = nlp.conflict_menu_select(data["text"], data["menu_id"])
+    print("result:", result)
+    return jsonify(result)
 
 
 @app.route('/option', methods=['POST'])
 def post_nlp_option():
     data = request.get_json()
-    print(data)
-    result = nlp.set_check(data("text"), data("set"))
+    result = nlp.select_option(data["text"])
+    return jsonify(result)
 
+
+@app.route('/set', methods=['POST'])
+def post_nlp_set():
+    data = request.get_json()
+    result = nlp.set_check(data["text"], data["set"])
     return jsonify(result)
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=8000, debug=False)

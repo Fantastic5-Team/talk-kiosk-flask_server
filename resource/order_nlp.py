@@ -46,7 +46,6 @@ def add_menu(sentence):
                 if word[1] == "NNG":
                     temp_string = temp_string + word[0]
                     menu_id = utils.find_key(menu_dict, temp_string)
-
                     if menu_id != None:
                         conflict_menu_list = utils.find_menu(
                             menu_dict, temp_string)
@@ -99,7 +98,7 @@ def conflict_menu_select(sentence, conflict_list):
         if int(menu_id) in conflict_list:
             return {"resolve": int(menu_id), "code": 2002}
         else:
-            return {"resolve": int(menu_id), "code": "메뉴리스트에 없음"}
+            return {"resolve": int(menu_id), "code": 2009}
     except:
         return {"resolve": "", "code": 1002}
 
@@ -127,8 +126,8 @@ def select_option(sentence):
 
 # API NO.4 세트 메뉴 선택
 # 선택을 안할 경우 2006, 세트 선택
-def set_check(sentence):
-    my_set={"set":[201,301],"code":{}}
+def set_check(sentence, set):
+    my_set={"set":set, "code":{}}
     temp=[]
     a=0
     b=0
@@ -160,7 +159,7 @@ def set_check(sentence):
             elif i//100 ==3:
                 my_set["set"][1]=i
 
-    if type(my_set["code"]) is dict: #분석 실패
+    else:
         my_set["code"]=1002
 
     return my_set
@@ -181,16 +180,16 @@ def confirm(sentence):
     #print(confirm_code)
     return confirm_code
 
-def main():
-    sentence = input("sentence > ")
-    print(tagger.pos(sentence))
+agger.pos(sentence))
+
+#def main():
+    #sentence = input("sentence > ")
+    #print(tagger.pos(sentence))
     #confilct_list = [106, 107, 108]
     #print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
     #print(set_check(sentence))
-    print(confirm(sentence))
+    #print(confirm(sentence))
 
-
-
-main()
+#main()
