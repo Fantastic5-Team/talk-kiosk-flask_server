@@ -170,15 +170,17 @@ def set_check(sentence, set):
 def confirm(sentence):
     confirm_code={"code":{}}
     for v in tagger.morphs(sentence):
-        if(v=='네'):
+        if(v=='네' or v=='맞'or v=='넹' or v=='넵'or v=='확인'): #긍정표현
             confirm_code["code"]=2008
-        if(v=='아니'):
+        if(v=='아니'or v=='달라요' or v=='다릅니다' or v=='엥'or v=='아닌데요'or v=='아님'): # 부정표현
             confirm_code["code"]="추후 수정기능 구현 후 구현 예정"    
    
     if type(confirm_code["code"]) is dict: #분석 실패
         confirm_code["code"]=1002  
     #print(confirm_code)
     return confirm_code
+
+agger.pos(sentence))
 
 #def main():
     #sentence = input("sentence > ")
