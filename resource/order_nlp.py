@@ -36,7 +36,7 @@ def add_menu(sentence):
     try:
         result_dict = {"order_list": [], "code": ""}
 
-        if sentence == "아니" or sentence == "다음":
+        if sentence == "아니" or sentence == "아니요" or sentence == "아니오" or sentence == "다음":
             result_dict["code"] = 2001
         elif sentence == "":
             result_dict["code"] = 1002
