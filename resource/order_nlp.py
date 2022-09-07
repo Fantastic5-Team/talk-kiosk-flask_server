@@ -46,6 +46,7 @@ def add_menu(sentence):
             for word in tagger.pos(sentence):
                 if word[1] == "NNG":
                     temp_string = temp_string + word[0]
+                    print(temp_string)
                     menu_id = utils.find_key(menu_dict, temp_string)
                     if menu_id != None:
                         conflict_menu_list = utils.find_menu(
@@ -55,18 +56,22 @@ def add_menu(sentence):
                         temp_string = ""
 
                     if temp_string == "라지세트" or temp_string == "세트라지":
-                        result_dict["order_list"][-1]["set"] = [202, 302]
-                        temp_string = ""
+                        if int(result_dict["order_list"][-1]["menu"][0]) < 200:
+                            result_dict["order_list"][-1]["set"] = [202, 302]
+                            temp_string = ""
                     elif "세트" in temp_string and len(temp_string) != 2:
-                        result_dict["order_list"][-1]["set"] = [201, 301]
-                        temp_string = temp_string.replace("세트", "")
+                        if int(result_dict["order_list"][-1]["menu"][0]) < 200:
+                            result_dict["order_list"][-1]["set"] = [201, 301]
+                            temp_string = temp_string.replace("세트", "")
+                            print("여기", temp_string)
                     elif temp_string == "라지":
-                        menu_temp_array = []
+                        if int(result_dict["order_list"][-1]["menu"][0]) > 200:
+                            menu_temp_array = []
 
-                        for menu in result_dict["order_list"][-1]["menu"]:
-                            if "라지" in menu_dict[str(menu)]:
-                                menu_temp_array.append(menu)
-                        result_dict["order_list"][-1]["menu"] = menu_temp_array
+                            for menu in result_dict["order_list"][-1]["menu"]:
+                                if "라지" in menu_dict[str(menu)]:
+                                    menu_temp_array.append(menu)
+                            result_dict["order_list"][-1]["menu"] = menu_temp_array
 
                 elif word[1] == "NR":
                     count_num = int(
@@ -80,7 +85,16 @@ def add_menu(sentence):
                     result_dict["order_list"][-1]["qty"] = count
 
             if temp_string == "세트":
-                result_dict["order_list"][-1]["set"] = [201, 301]
+                if int(result_dict["order_list"][-1]["menu"][0]) < 200:
+                    result_dict["order_list"][-1]["set"] = [201, 301]
+            else:
+                menu_id = utils.find_key(menu_dict, temp_string)
+                if menu_id != None:
+                    conflict_menu_list = utils.find_menu(
+                        menu_dict, temp_string)
+                    result_dict["order_list"].append(
+                        {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
+                    temp_string = ""
 
             if result_dict["order_list"] != []:
                 result_dict["code"] = 1001
@@ -200,4 +214,4 @@ def main():
     # print(confirm(sentence))
 
 
-# main()
+main()
