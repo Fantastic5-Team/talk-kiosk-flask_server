@@ -136,7 +136,7 @@ def select_option(sentence):
         else:
             for v in opt_dict.values():
                 if v in sentence:
-                    opt_select["option"].append(utils.find_key(opt_dict, v))
+                    opt_select["option"].append(int(utils.find_key(opt_dict, v)))
                     opt_select["code"] = 2003
         if "code" not in opt_select:
             opt_select["code"] = 1002
@@ -207,9 +207,9 @@ def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
     #confilct_list = [106, 107, 108]
-    print(add_menu(sentence))
+    #print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
-    # select_option(sentence)
+    select_option(sentence)
     # print(set_check(sentence))
     # print(confirm(sentence))
 
