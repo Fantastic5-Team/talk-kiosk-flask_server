@@ -5,25 +5,25 @@ import utils
 tagger = Mecab()
 
 # json 파일 불러오기
-with open("/home/workspace/talk-kiosk-flask_server/json/intent.json", "r") as f:
+with open("/home/workspace/json/intent.json", "r") as f:
     data = json.load(f)
 f.close()
 
 order = data["order"]
 
-with open("/home/workspace/talk-kiosk-flask_server/json/menu-table.json", "r") as f:
+with open("/home/workspace/json/menu-table.json", "r") as f:
     data = json.load(f)
 f.close
 
 menu_dict = data
 
-with open("/home/workspace/talk-kiosk-flask_server/json/number.json", "r") as f:
+with open("/home/workspace/json/number.json", "r") as f:
     data = json.load(f)
 f.close
 
 num_dict = data
 
-with open("/home/workspace/talk-kiosk-flask_server/json/option-sel.json", "r") as f:
+with open("/home/workspace/json/option-sel.json", "r") as f:
     data = json.load(f)
 f.close
 
@@ -136,7 +136,8 @@ def select_option(sentence):
         else:
             for v in opt_dict.values():
                 if v in sentence:
-                    opt_select["option"].append(int(utils.find_key(opt_dict, v)))
+                    opt_select["option"].append(
+                        int(utils.find_key(opt_dict, v)))
                     opt_select["code"] = 2003
         if "code" not in opt_select:
             opt_select["code"] = 1002
@@ -147,45 +148,42 @@ def select_option(sentence):
 
 
 # API NO.4 세트 메뉴 선택
-# 선택을 안할 경우 2006, 세트 선택
-def set_check(sentence, set):
-    my_set = {"set": set, "code": {}}
-    temp = []
-    a = 0
-    b = 0
+
+def set_check(sentence):
+    # try:
+    my_set = {"set": [201, 301], "code": {2005}}
+    side_count = 0
+    drink_count = 0
+
+    if sentence == "":
+        my_set["code"] = 1002
+    else:
+        temp_string = ""
+
+        for word in tagger.pos(sentence):
+            if word[1] == "NNG":
+                temp_string = temp_string + word[0]
+                side_id = utils.find_key(menu_dict, temp_string)
+                if side_id != None:
+                    if int(side_id) < 200:
+                        continue
+                    elif int(side_id) < 300:
+                        my_set["set"][0] = side_id
+                        temp_string = ""
+                        side_count = side_count+1
+                    else:
+                        my_set["set"][1] = side_id
+                        temp_string = ""
+                        drink_count = drink_count+1
+
     for v in tagger.morphs(sentence):
         if(v == '아니' or v == '다음'):
             my_set["code"] = 2006
-    for k, v in menu_dict.items():
-        if v in sentence:
-            # print(k,v)
-            if int(k) < 200:
-                continue
-            elif int(k) < 300:
-                temp.append(int(k))
-            else:
-                temp.append(int(k))
-    # 사이드 메뉴와 음료의 갯수의 입력을 확인한다.
-    for i in temp:
-        if i//100 == 2:  # 사이드라면
-            a += 1
-        elif i//100 == 3:  # 음료라면
-            b += 1
-    if(a >= 2 or b >= 2):  # 사이드나 음료가 두개이상 입력이 되면
-        my_set["code"] = 2007
-    elif (my_set["code"] != 2006 and a+b >= 1):
-        my_set["code"] = 2005
-        for i in temp:
-            if i//100 == 2:
-                my_set["set"][0] = i
-            elif i//100 == 3:
-                my_set["set"][1] = i
 
+    if (drink_count > 1 or side_count > 1):
+        return {"set": [], "code": 2007}
     else:
-        my_set["code"] = 1002
-
-    return my_set
-    # print(my_set)
+        return my_set
 
 
 # API NO.5
@@ -207,10 +205,10 @@ def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
     #confilct_list = [106, 107, 108]
-    #print(add_menu(sentence))
+    # print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
-    select_option(sentence)
-    # print(set_check(sentence))
+    # select_option(sentence)
+    print(set_check(sentence))
     # print(confirm(sentence))
 
 
