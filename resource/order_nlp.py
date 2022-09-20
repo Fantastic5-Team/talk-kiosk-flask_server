@@ -5,25 +5,25 @@ import utils
 tagger = Mecab()
 
 # json 파일 불러오기
-with open("/home/workspace/json/intent.json", "r") as f:
+with open("talk-kiosk-flask_server/json/intent.json", "r") as f:
     data = json.load(f)
 f.close()
 
 order = data["order"]
 
-with open("/home/workspace/json/menu-table.json", "r") as f:
+with open("talk-kiosk-flask_server/json/menu-table.json", "r") as f:
     data = json.load(f)
 f.close
 
 menu_dict = data
 
-with open("/home/workspace/json/number.json", "r") as f:
+with open("talk-kiosk-flask_server/json/number.json", "r") as f:
     data = json.load(f)
 f.close
 
 num_dict = data
 
-with open("/home/workspace/json/option-sel.json", "r") as f:
+with open("talk-kiosk-flask_server/json/option-sel.json", "r") as f:
     data = json.load(f)
 f.close
 
@@ -150,8 +150,7 @@ def select_option(sentence):
 # API NO.4 세트 메뉴 선택
 
 def set_check(sentence):
-    # try:
-    my_set = {"set": [201, 301], "code": {2005}}
+    my_set = {"set": set, "code": {2005}}
     side_count = 0
     drink_count = 0
 
@@ -181,9 +180,10 @@ def set_check(sentence):
             my_set["code"] = 2006
 
     if (drink_count > 1 or side_count > 1):
-        return {"set": [], "code": 2007}
-    else:
-        return my_set
+        my_set["set"] = set
+        my_set["code"] = 2007
+
+    return my_set
 
 
 # API NO.5
