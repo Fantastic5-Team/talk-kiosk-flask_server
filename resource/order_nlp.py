@@ -149,7 +149,7 @@ def select_option(sentence):
 
 # API NO.4 세트 메뉴 선택
 
-def set_check(sentence):
+def set_check(sentence, set):
     my_set = {"set": set, "code": {2005}}
     side_count = 0
     drink_count = 0
