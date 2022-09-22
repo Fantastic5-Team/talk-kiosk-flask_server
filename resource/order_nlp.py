@@ -5,25 +5,29 @@ import utils
 tagger = Mecab()
 
 # json 파일 불러오기
-with open("talk-kiosk-flask_server/json/intent.json", "r") as f:
+
+
+with open("/home/workspace/talk-kiosk-flask_server/json/intent.json", "r") as f:
     data = json.load(f)
 f.close()
 
 order = data["order"]
 
-with open("talk-kiosk-flask_server/json/menu-table.json", "r") as f:
+with open("/home/workspace/talk-kiosk-flask_server/json/menu-table.json", "r") as f:
     data = json.load(f)
 f.close
 
 menu_dict = data
 
-with open("talk-kiosk-flask_server/json/number.json", "r") as f:
+with open("/home/workspace/talk-kiosk-flask_server/json/number.json", "r") as f:
+
     data = json.load(f)
 f.close
 
 num_dict = data
 
-with open("talk-kiosk-flask_server/json/option-sel.json", "r") as f:
+
+with open("/home/workspace/talk-kiosk-flask_server/json/option-sel.json", "r") as f:
     data = json.load(f)
 f.close
 
@@ -63,7 +67,7 @@ def add_menu(sentence):
                         if int(result_dict["order_list"][-1]["menu"][0]) < 200:
                             result_dict["order_list"][-1]["set"] = [201, 301]
                             temp_string = temp_string.replace("세트", "")
-                            print("여기", temp_string)
+                            #print("여기", temp_string)
                     elif temp_string == "라지":
                         if int(result_dict["order_list"][-1]["menu"][0]) > 200:
                             menu_temp_array = []
@@ -72,11 +76,12 @@ def add_menu(sentence):
                                 if "라지" in menu_dict[str(menu)]:
                                     menu_temp_array.append(menu)
                             result_dict["order_list"][-1]["menu"] = menu_temp_array
+                            temp_string = temp_string.replace("라지", "")
 
                 elif word[1] == "NR":
-                    count_num = int(
+                    count = int(
                         utils.find_key_value_list(num_dict, word[0]))
-                    result_dict["order_list"][-1]["qty"] = count_num
+                    result_dict["order_list"][-1]["qty"] = count
                 elif word[1] == "SN":
                     count = int(word[0])
                 elif utils.exist_key_value_list(num_dict, word[0]):
@@ -116,6 +121,9 @@ def conflict_menu_select(sentence, conflict_list):
                 menu_id = utils.find_key(menu_dict, temp_string)
             elif word[1] == "SN":
                 menu_id = conflict_list[int(word[0]) - 1]
+            elif word[1] == "NR":
+                menu_id = conflict_list[int(
+                    utils.find_key_value_list(num_dict, word[0])) - 1]
 
         if int(menu_id) in conflict_list:
             return {"resolve": int(menu_id), "code": 2002}
@@ -204,11 +212,11 @@ def confirm(sentence):
 def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
-    #confilct_list = [106, 107, 108]
-    # print(add_menu(sentence))
+    confilct_list = [106, 107, 108]
+    print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    print(set_check(sentence))
+    # print(set_check(sentence))
     # print(confirm(sentence))
 
 
