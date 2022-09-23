@@ -67,7 +67,7 @@ def add_menu(sentence):
                         if int(result_dict["order_list"][-1]["menu"][0]) < 200:
                             result_dict["order_list"][-1]["set"] = [201, 301]
                             temp_string = temp_string.replace("세트", "")
-                            #print("여기", temp_string)
+                            # print("여기", temp_string)
                     elif temp_string == "라지":
                         if int(result_dict["order_list"][-1]["menu"][0]) > 200:
                             menu_temp_array = []
@@ -158,40 +158,45 @@ def select_option(sentence):
 # API NO.4 세트 메뉴 선택
 
 def set_check(sentence, set):
-    my_set = {"set": set, "code": {2005}}
-    side_count = 0
-    drink_count = 0
+    try:
+        my_set = {"set": set, "code": {2005}}
+        side_count = 0
+        drink_count = 0
 
-    if sentence == "":
-        my_set["code"] = 1002
-    else:
-        temp_string = ""
+        if sentence == "":
+            my_set["code"] = 1002
+        else:
+            temp_string = ""
 
-        for word in tagger.pos(sentence):
-            if word[1] == "NNG":
-                temp_string = temp_string + word[0]
-                side_id = utils.find_key(menu_dict, temp_string)
-                if side_id != None:
-                    if int(side_id) < 200:
-                        continue
-                    elif int(side_id) < 300:
-                        my_set["set"][0] = side_id
-                        temp_string = ""
-                        side_count = side_count+1
-                    else:
-                        my_set["set"][1] = side_id
-                        temp_string = ""
-                        drink_count = drink_count+1
+            for word in tagger.pos(sentence):
+                if word[1] == "NNG":
+                    temp_string = temp_string + word[0]
+                    side_id = utils.find_key(menu_dict, temp_string)
+                    if side_id != None:
+                        if int(side_id) < 200:
+                            continue
+                        elif int(side_id) < 300:
+                            my_set["set"][0] = side_id
+                            if temp_string != "감자튀김":
+                                side_count = side_count+1
+                                temp_string = ""
 
-    for v in tagger.morphs(sentence):
-        if(v == '아니' or v == '다음'):
-            my_set["code"] = 2006
+                        else:
+                            my_set["set"][1] = side_id
+                            if temp_string != "사이다" and temp_string != "콜라" and temp_string != "제로콜라":
+                                drink_count = drink_count+1
+                                temp_string = ""
 
-    if (drink_count > 1 or side_count > 1):
-        my_set["set"] = set
-        my_set["code"] = 2007
+        for v in tagger.morphs(sentence):
+            if(v == '아니' or v == '다음'):
+                my_set["code"] = 2006
 
-    return my_set
+        if (drink_count > 1 or side_count > 1):
+            my_set["code"] = 2007
+
+        return my_set
+    except:
+        return {"set": set, "code": 1002}
 
 
 # API NO.5
@@ -213,10 +218,10 @@ def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
     confilct_list = [106, 107, 108]
-    print(add_menu(sentence))
-    #print(conflict_menu_select(sentence, confilct_list))
+    # print(add_menu(sentence))
+    # print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    # print(set_check(sentence))
+    print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
 
 
