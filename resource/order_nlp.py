@@ -167,25 +167,59 @@ def set_check(sentence, set):
             my_set["code"] = 1002
         else:
             temp_string = ""
+            temp_side_string = ""
+            tmep_drink_string = ""
 
             for word in tagger.pos(sentence):
                 if word[1] == "NNG":
                     temp_string = temp_string + word[0]
+                    if temp_string == "라지":
+                        if temp_side_string == "감자튀김":
+                            temp_string = temp_side_string+temp_string
+                            side_count = side_count-1
+                        if tmep_drink_string == "사이다":
+                            temp_string = tmep_drink_string+temp_string
+                        if tmep_drink_string == "콜라":
+                            temp_string = tmep_drink_string+temp_string
+                        if tmep_drink_string == "제로콜라":
+                            temp_string = tmep_drink_string+temp_string
+
                     side_id = utils.find_key(menu_dict, temp_string)
                     if side_id != None:
                         if int(side_id) < 200:
                             continue
                         elif int(side_id) < 300:
                             my_set["set"][0] = side_id
-                            if temp_string != "감자튀김":
-                                side_count = side_count+1
-                                temp_string = ""
+                            side_count = side_count+1
+                            if temp_string == "감자튀김":
+                                temp_side_string = temp_string
+
+                            temp_string = ""
 
                         else:
                             my_set["set"][1] = side_id
-                            if temp_string != "사이다" and temp_string != "콜라" and temp_string != "제로콜라":
-                                drink_count = drink_count+1
-                                temp_string = ""
+                            drink_count = drink_count+1
+
+                            if temp_string == "사이다":
+                                tmep_drink_string = temp_string
+
+                            if temp_string == "사이다라지":
+                                tmep_drink_string = ""
+                                drink_count = drink_count-1
+                            if temp_string == "콜라":
+                                tmep_drink_string = temp_string
+
+                            if temp_string == "콜라라지":
+                                tmep_drink_string = ""
+                                drink_count = drink_count-1
+                            if temp_string == "제로콜라":
+                                tmep_drink_string = tㅇemp_string
+
+                            if temp_string == "제로콜라라지":
+                                tmep_drink_string = ""
+                                drink_count = drink_count-1
+
+                            temp_string = ""
 
         for v in tagger.morphs(sentence):
             if(v == '아니' or v == '다음'):
@@ -201,23 +235,29 @@ def set_check(sentence, set):
 
 # API NO.5
 def confirm(sentence):
-    confirm_code = {"code": {}}
-    for v in tagger.morphs(sentence):
-        if(v == '네' or v == '맞' or v == '넹' or v == '넵' or v == '확인'):  # 긍정표현
-            confirm_code["code"] = 2008
-        if(v == '아니' or v == '달라요' or v == '다릅니다' or v == '엥' or v == '아닌데요' or v == '아님'):  # 부정표현
-            confirm_code["code"] = "추후 수정기능 구현 후 구현 예정"
+    try:
+        confirm_code = {"code": {}}
+        for v in tagger.morphs(sentence):
+            if(v == '네' or v == '맞' or v == '넹' or v == '넵' or v == '확인'):  # 긍정표현
+                confirm_code["code"] = 2008
+            if(v == '아니' or v == '달라요' or v == '다릅니다' or v == '엥' or v == '아닌데요' or v == '아님'):  # 부정표현
+                confirm_code["code"] = "추후 수정기능 구현 후 구현 예정"
 
-    if type(confirm_code["code"]) is dict:  # 분석 실패
-        confirm_code["code"] = 1002
-    # print(confirm_code)
-    return confirm_code
+        if type(confirm_code["code"]) is dict:  # 분석 실패
+            confirm_code["code"] = 1002
+        # print(confirm_code)
+        return confirm_code
+    except:
+        return {"code": 1002}
+
+
+# API NO.6
 
 
 def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
-    confilct_list = [106, 107, 108]
+    # confilct_list = [106, 107, 108]
     # print(add_menu(sentence))
     # print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
