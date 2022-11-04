@@ -246,7 +246,7 @@ def confirm(sentence):
         if type(confirm_code["code"]) is dict:  # 분석 실패
             confirm_code["code"] = 1002
         # print(confirm_code)
-        return confirm_codeㄴ
+        return confirm_code
     except:
         return {"code": 1002}
 
