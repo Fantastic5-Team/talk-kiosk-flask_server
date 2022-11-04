@@ -241,17 +241,33 @@ def confirm(sentence):
             if(v == '네' or v == '맞' or v == '넹' or v == '넵' or v == '확인'):  # 긍정표현
                 confirm_code["code"] = 2008
             if(v == '아니' or v == '달라요' or v == '다릅니다' or v == '엥' or v == '아닌데요' or v == '아님'):  # 부정표현
-                confirm_code["code"] = "추후 수정기능 구현 후 구현 예정"
+                confirm_code["code"] = 1001
 
         if type(confirm_code["code"]) is dict:  # 분석 실패
             confirm_code["code"] = 1002
         # print(confirm_code)
-        return confirm_code
+        return confirm_codeㄴ
     except:
         return {"code": 1002}
 
 
-# API NO.6
+# API NO.6       # 매장에서 먹고 가나요??
+def takeout(sentence):
+    try:
+        takeout_code = {"code": {}}
+        for v in tagger.morphs(sentence):
+            if(v == '네' or v == '맞' or v == '넹' or v == '넵'):  # 긍정표현
+                takeout_code["code"] = 1001  # 매장 식사
+                return True
+            if(v == '아니' or v == '아닌데요' or v == '아님'):  # 부정표현
+                takeout_code["code"] = 1001
+                return False
+
+        if type(takeout_code["code"]) is dict:  # 분석 실패
+            takeout_code["code"] = 1002
+            return takeout_code
+    except:
+        return {"code": 1002}
 
 
 def main():
@@ -261,8 +277,9 @@ def main():
     # print(add_menu(sentence))
     # print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    print(set_check(sentence, [201, 301]))
+    #print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
+    print(takeout(sentence))
 
 
 main()
