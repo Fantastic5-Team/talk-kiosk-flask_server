@@ -42,5 +42,21 @@ def post_nlp_set():
     return jsonify(result)
 
 
+@app.route('/confirm', methods=['POST'])
+def post_nlp_confirm():
+    data = request.get_json()
+    result = nlp.confirm(data["text"])
+    print(result)
+    return jsonify(result)
+
+
+@app.route('/takeout', methods=['POST'])
+def post_nlp_takeout():
+    data = request.get_json()
+    result = nlp.takeout(data["text"])
+    print(result)
+    return jsonify(result)
+
+
 if __name__ == "__main__":
     app.run(port=8000, debug=False)

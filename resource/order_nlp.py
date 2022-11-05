@@ -257,11 +257,13 @@ def takeout(sentence):
         takeout_code = {"code": {}}
         for v in tagger.morphs(sentence):
             if(v == '네' or v == '맞' or v == '넹' or v == '넵'):  # 긍정표현
-                takeout_code["code"] = 1001  # 매장 식사
-                return True
+                takeout_code["code"] = 1001
+                takeout_code["anwer"] = True  # 매장 식사
+                return takeout_code
             if(v == '아니' or v == '아닌데요' or v == '아님'):  # 부정표현
                 takeout_code["code"] = 1001
-                return False
+                takeout_code["anwer"] = False  # takeout
+                return takeout_code
 
         if type(takeout_code["code"]) is dict:  # 분석 실패
             takeout_code["code"] = 1002
