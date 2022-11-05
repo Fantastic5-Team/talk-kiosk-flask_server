@@ -104,6 +104,38 @@
   }
   ```
 
+### 5. 주문 확인
+  `[POST]` /confirm
+  ```json
+  //body
+  {
+    "text" "네"
+  }
+  ```
+  ```json
+  //return
+  {
+  "code":2008
+  }
+  ```
+
+### 6. 매장내 식사 유무
+  `[POST]` /takeout
+  ```json
+  //body
+  {
+    "text" "네"
+  }
+  ```
+  ```json
+  //return
+  {
+  "code":1001,
+  "anwer": True
+  }
+  ```
+
+
 
 ## 코드표
 > | 코드 | 설명 |
