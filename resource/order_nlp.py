@@ -159,6 +159,7 @@ def select_option(sentence):
 
 def set_check(sentence, set):
     try:
+        cek = 0
         my_set = {"set": set, "code": {2005}}
         side_count = 0
         drink_count = 0
@@ -189,6 +190,7 @@ def set_check(sentence, set):
                         if int(side_id) < 200:
                             continue
                         elif int(side_id) < 300:
+                            cek = 1
                             my_set["set"][0] = side_id
                             side_count = side_count+1
                             if temp_string == "감자튀김":
@@ -197,6 +199,7 @@ def set_check(sentence, set):
                             temp_string = ""
 
                         else:
+                            cek = 1
                             my_set["set"][1] = side_id
                             drink_count = drink_count+1
 
@@ -213,7 +216,7 @@ def set_check(sentence, set):
                                 tmep_drink_string = ""
                                 drink_count = drink_count-1
                             if temp_string == "제로콜라":
-                                tmep_drink_string = tㅇemp_string
+                                tmep_drink_string = temp_string
 
                             if temp_string == "제로콜라라지":
                                 tmep_drink_string = ""
@@ -227,6 +230,9 @@ def set_check(sentence, set):
 
         if (drink_count > 1 or side_count > 1):
             my_set["code"] = 2007
+
+        if cek != 1:
+            my_set["code"] = 1002
 
         return my_set
     except:
@@ -277,10 +283,11 @@ def main():
     print(tagger.pos(sentence))
     # confilct_list = [106, 107, 108]
     # print(add_menu(sentence))
-    print(conflict_menu_select(sentence, confilct_list))
+    #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    # print(confirm(sentence))
-    print(takeout(sentence))
+    #print(set_check(sentence, [201, 301]))
+    print(confirm(sentence))
+    # print(takeout(sentence))
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
