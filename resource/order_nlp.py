@@ -167,25 +167,59 @@ def set_check(sentence, set):
             my_set["code"] = 1002
         else:
             temp_string = ""
+            temp_side_string = ""
+            tmep_drink_string = ""
 
             for word in tagger.pos(sentence):
                 if word[1] == "NNG":
                     temp_string = temp_string + word[0]
+                    if temp_string == "라지":
+                        if temp_side_string == "감자튀김":
+                            temp_string = temp_side_string+temp_string
+                            side_count = side_count-1
+                        if tmep_drink_string == "사이다":
+                            temp_string = tmep_drink_string+temp_string
+                        if tmep_drink_string == "콜라":
+                            temp_string = tmep_drink_string+temp_string
+                        if tmep_drink_string == "제로콜라":
+                            temp_string = tmep_drink_string+temp_string
+
                     side_id = utils.find_key(menu_dict, temp_string)
                     if side_id != None:
                         if int(side_id) < 200:
                             continue
                         elif int(side_id) < 300:
                             my_set["set"][0] = side_id
-                            if temp_string != "감자튀김":
-                                side_count = side_count+1
-                                temp_string = ""
+                            side_count = side_count+1
+                            if temp_string == "감자튀김":
+                                temp_side_string = temp_string
+
+                            temp_string = ""
 
                         else:
                             my_set["set"][1] = side_id
-                            if temp_string != "사이다" and temp_string != "콜라" and temp_string != "제로콜라":
-                                drink_count = drink_count+1
-                                temp_string = ""
+                            drink_count = drink_count+1
+
+                            if temp_string == "사이다":
+                                tmep_drink_string = temp_string
+
+                            if temp_string == "사이다라지":
+                                tmep_drink_string = ""
+                                drink_count = drink_count-1
+                            if temp_string == "콜라":
+                                tmep_drink_string = temp_string
+
+                            if temp_string == "콜라라지":
+                                tmep_drink_string = ""
+                                drink_count = drink_count-1
+                            if temp_string == "제로콜라":
+                                tmep_drink_string = tㅇemp_string
+
+                            if temp_string == "제로콜라라지":
+                                tmep_drink_string = ""
+                                drink_count = drink_count-1
+
+                            temp_string = ""
 
         for v in tagger.morphs(sentence):
             if(v == '아니' or v == '다음'):
@@ -201,28 +235,52 @@ def set_check(sentence, set):
 
 # API NO.5
 def confirm(sentence):
-    confirm_code = {"code": {}}
-    for v in tagger.morphs(sentence):
-        if(v == '네' or v == '맞' or v == '넹' or v == '넵' or v == '확인'):  # 긍정표현
-            confirm_code["code"] = 2008
-        if(v == '아니' or v == '달라요' or v == '다릅니다' or v == '엥' or v == '아닌데요' or v == '아님'):  # 부정표현
-            confirm_code["code"] = "추후 수정기능 구현 후 구현 예정"
+    try:
+        confirm_code = {"code": {}}
+        for v in tagger.morphs(sentence):
+            if(v == '네' or v == '맞' or v == '넹' or v == '넵' or v == '확인'):  # 긍정표현
+                confirm_code["code"] = 2008
+            if(v == '아니' or v == '달라요' or v == '다릅니다' or v == '엥' or v == '아닌데요' or v == '아님'):  # 부정표현
+                confirm_code["code"] = 1001
 
-    if type(confirm_code["code"]) is dict:  # 분석 실패
-        confirm_code["code"] = 1002
-    # print(confirm_code)
-    return confirm_code
+        if type(confirm_code["code"]) is dict:  # 분석 실패
+            confirm_code["code"] = 1002
+        # print(confirm_code)
+        return confirm_code
+    except:
+        return {"code": 1002}
+
+
+# API NO.6       # 매장에서 먹고 가나요??
+def takeout(sentence):
+    try:
+        takeout_code = {"code": {}}
+        for v in tagger.morphs(sentence):
+            if(v == '네' or v == '맞' or v == '넹' or v == '넵'):  # 긍정표현
+                takeout_code["code"] = 1001
+                takeout_code["anwer"] = True  # 매장 식사
+                return takeout_code
+            if(v == '아니' or v == '아닌데요' or v == '아님'):  # 부정표현
+                takeout_code["code"] = 1001
+                takeout_code["anwer"] = False  # takeout
+                return takeout_code
+
+        if type(takeout_code["code"]) is dict:  # 분석 실패
+            takeout_code["code"] = 1002
+            return takeout_code
+    except:
+        return {"code": 1002}
 
 
 def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
-    confilct_list = [106, 107, 108]
+    # confilct_list = [106, 107, 108]
     # print(add_menu(sentence))
     print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    # print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
+    print(takeout(sentence))
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
