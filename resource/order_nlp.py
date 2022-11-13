@@ -264,11 +264,11 @@ def takeout(sentence):
         for v in tagger.morphs(sentence):
             if(v == '네' or v == '맞' or v == '매장' or v == '넵' or v == '안'):  # 매장 식사 안(안에서 먹고갈게요)
                 takeout_code["code"] = 1001
-                takeout_code["anwer"] = True  # 매장 식사
+                takeout_code["isTakeout"] = False  # 매장 식사
                 return takeout_code
             if(v == '아니' or v == '아닌데요' or v == '아님' or v == '밖' or v == '집' or v == '괜찮' or v == '테이크' or v == '아웃'):  # 부정표현
                 takeout_code["code"] = 1001
-                takeout_code["anwer"] = False  # takeout
+                takeout_code["isTakeout"] = True  # takeout
                 return takeout_code
 
         if type(takeout_code["code"]) is dict:  # 분석 실패
@@ -292,4 +292,4 @@ def main():
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
     # conflict_list = [201,202,203,204,205,301,302,303,304,305,306,307]#사이드 메뉴만 충돌
-main()
+# main()
