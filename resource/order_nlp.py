@@ -163,6 +163,10 @@ def set_check(sentence, set):
         my_set = {"set": set, "code": {2005}}
         side_count = 0
         drink_count = 0
+        for v in tagger.morphs(sentence):
+            if(v == '아니' or v == '다음'):
+                my_set["code"] = 2006
+                return my_set
 
         if sentence == "":
             my_set["code"] = 1002
@@ -224,10 +228,6 @@ def set_check(sentence, set):
 
                             temp_string = ""
 
-        for v in tagger.morphs(sentence):
-            if(v == '아니' or v == '다음'):
-                my_set["code"] = 2006
-
         if (drink_count > 1 or side_count > 1):
             my_set["code"] = 2007
 
@@ -285,11 +285,11 @@ def main():
     # print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    #print(set_check(sentence, [201, 301]))
+    print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
-    print(takeout(sentence))
+    # print(takeout(sentence))
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
     # conflict_list = [201,202,203,204,205,301,302,303,304,305,306,307]#사이드 메뉴만 충돌
-# main()
+main()
