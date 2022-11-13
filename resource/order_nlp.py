@@ -285,9 +285,9 @@ def main():
     # print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    #print(set_check(sentence, [201, 301]))
+    print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
-    print(takeout(sentence))
+    # print(takeout(sentence))
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
