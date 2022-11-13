@@ -160,7 +160,7 @@ def select_option(sentence):
 def set_check(sentence, set):
     try:
         cek = 0
-        my_set = {"set": set, "code": {2005}}
+        my_set = {"set": set, "code": 2005}
         side_count = 0
         drink_count = 0
         for v in tagger.morphs(sentence):
@@ -195,7 +195,7 @@ def set_check(sentence, set):
                             continue
                         elif int(side_id) < 300:
                             cek = 1
-                            my_set["set"][0] = side_id
+                            my_set["set"][0] = int(side_id)
                             side_count = side_count+1
                             if temp_string == "감자튀김":
                                 temp_side_string = temp_string
@@ -204,7 +204,7 @@ def set_check(sentence, set):
 
                         else:
                             cek = 1
-                            my_set["set"][1] = side_id
+                            my_set["set"][1] = int(side_id)
                             drink_count = drink_count+1
 
                             if temp_string == "사이다":
