@@ -42,6 +42,11 @@ def add_menu(sentence):
 
         if sentence == "아니" or sentence == "아니요" or sentence == "아니오" or sentence == "다음":
             result_dict["code"] = 2001
+        elif sentence == "메뉴 보여줘":
+            menu_list = list(menu_dict.keys())
+            result_dict = {"order_list": [
+                {"menu": menu_list, "option": [], "set": [], "qty": 0}], "code": "1001"}
+            return result_dict
         elif sentence == "":
             result_dict["code"] = 1002
         else:
@@ -282,10 +287,10 @@ def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
     # confilct_list = [106, 107, 108]
-    # print(add_menu(sentence))
+    print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
-    print(set_check(sentence, [201, 301]))
+    #print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
     # print(takeout(sentence))
 
