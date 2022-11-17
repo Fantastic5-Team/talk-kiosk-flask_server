@@ -57,29 +57,41 @@ def add_menu(sentence):
         else:
             temp_string = ""
 
-            for word in tagger.pos(sentence):
-                if word[1] == "NNG":
-                    temp_string = temp_string + word[0]
+            for word in tagger.pos(sentence):  # 문장 형태소 단위로 반복문
+                if word[1] == "NNG":  # 명사이면
+                    temp_string = temp_string + word[0]  # 명사 이어붙이기
                     print(temp_string)
+                    # temp_string이 메뉴명이면 해당 메뉴명을 포함하는 메뉴 code list 단품으로 추가
                     temp_string, result_dict = menu_insert(
                         temp_string, result_dict)
 
+                    # "라제 세트로 주세요" or "~ 세트는 라지로 주세요"인 경우
                     if temp_string == "라지세트" or temp_string == "세트라지":
+                        # 메뉴 코드가 200미만으로 버거이면
                         if int(result_dict["order_list"][-1]["menu"][0]) < 200:
+                            # 콜라 라지, 감자튀김 라지 추가
                             result_dict["order_list"][-1]["set"] = [202, 302]
                             temp_string = ""
+                    # 첫번째 if문처럼 세트 뒤에 라지가 오는 경우도 있으므로
+                    # 세트 뒤에 라지가 아닌 명사가 붙은 경우 기본 사이즈로 세트 추가
                     elif "세트" in temp_string and len(temp_string) != 2:
                         if int(result_dict["order_list"][-1]["menu"][0]) < 200:
                             result_dict["order_list"][-1]["set"] = [201, 301]
+                            # temp_string에서 세트를 지운다.
                             temp_string = temp_string.replace("세트", "")
-
+                    # 사이드 메뉴를 라지로 시킨 경우 처리
                     elif temp_string == "라지":
+                        # code 200 초과로 사이드 메뉴가 맞는가
                         if int(result_dict["order_list"][-1]["menu"][0]) > 200:
                             menu_temp_array = []
-
+                            # 마지막 주문의 메뉴 리스트를 반복문으로 돌린다.
+                            # [301, 302, 305, 306]처럼 콜라가 포함된 메뉴가 전부 들어가므로 기본과 라지 사이즈 모두 들어가있다.
                             for menu in result_dict["order_list"][-1]["menu"]:
+                                # 이름에 라지가 들어간 code이면
                                 if "라지" in menu_dict[str(menu)]:
+                                    # menu_temp_array에 담는다.
                                     menu_temp_array.append(menu)
+                            # 메뉴를 라지로만 남긴다.
                             result_dict["order_list"][-1]["menu"] = menu_temp_array
                             temp_string = temp_string.replace("라지", "")
 
@@ -92,9 +104,11 @@ def add_menu(sentence):
                             temp_string, result_dict = menu_insert(
                                 value, result_dict)
 
-                elif word[1] == "NR":
+                elif word[1] == "NR":  # 수사
+                    # 숫자 int형 저장
                     count = int(
                         utils.find_key_value_list(num_dict, word[0]))
+                    # 마지막 주문의 수량을 변경한다.
                     result_dict["order_list"][-1]["qty"] = count
                 elif word[1] == "SN":
                     count = int(word[0])
@@ -103,15 +117,20 @@ def add_menu(sentence):
                 elif word[0] == "개":
                     result_dict["order_list"][-1]["qty"] = count
 
+            # "~세트 라지로 주세요"의 경우를 위해 기본 사이즈 세트 처리를 아래와 같이 함.
+            # elif "세트" in temp_string and len(temp_string) != 2 기본 사이즈 세트 처리
+            # 세트 단어 뒤에 라지도 안 들어오고 명사도 안들어 온 경우 기본 사이즈 세트 처리
             if temp_string == "세트":
                 if int(result_dict["order_list"][-1]["menu"][0]) < 200:
                     result_dict["order_list"][-1]["set"] = [201, 301]
-            else:
+            else:  # 수량 얘기 없이 들어온 메뉴이름 주문 추가
                 temp_string, result_dict = menu_insert(
                     temp_string, result_dict)
 
+            # 주문 성공 code 1001 추가
             if result_dict["order_list"] != []:
                 result_dict["code"] = 1001
+            # 분석 실패 code 1002
             else:
                 result_dict["code"] = 1002
 
@@ -123,9 +142,12 @@ def add_menu(sentence):
 
 
 def menu_insert(temp_string, result_dict):
+    # temp_string의 메뉴명 code 받아오기
     menu_id = utils.find_key(menu_dict, temp_string)
-    if menu_id != None:
+    if menu_id != None:  # 메뉴명 code가 있으면
+        # 메뉴명이 포함된 모든 메뉴의 code를 리스트로 저장한다.
         conflict_menu_list = utils.find_menu(menu_dict, temp_string)
+        # conflict_menu_list 단품으로 추가한다.
         result_dict["order_list"].append(
             {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
         temp_string = ""
@@ -136,21 +158,27 @@ def menu_insert(temp_string, result_dict):
 def conflict_menu_select(sentence, conflict_list):
     try:
         temp_string = ""
-        for word in tagger.pos(sentence):
-            if word[1] == "NNG":
+        for word in tagger.pos(sentence):  # 형태소 단위 반복문
+            if word[1] == "NNG":  # 명사
+                # 이어붙인다
                 temp_string = temp_string + word[0]
+                # 명사가 이어붙여 지면서 메뉴이름이 되면 해당 메뉴 code를 menu_id에 할당
                 menu_id = utils.find_key(menu_dict, temp_string)
+            # 메뉴 선택지에서 해당 번 째 메뉴 code를 menu_id에 할당
             elif word[1] == "SN":
                 menu_id = conflict_list[int(word[0]) - 1]
+            # 메뉴 선택지에서 해당 번 째 메뉴 code를 menu_id에 할당
             elif word[1] == "NR":
                 menu_id = conflict_list[int(
                     utils.find_key_value_list(num_dict, word[0])) - 1]
 
+        # 메뉴 선택지에서 잘 선택한 경우 code 2002
         if int(menu_id) in conflict_list:
             return {"resolve": int(menu_id), "code": 2002}
+        # 메뉴 선택지에서 고르지 않은
         else:
             return {"resolve": int(menu_id), "code": 2009}
-    except:
+    except:  # 에러
         return {"resolve": "", "code": 1002}
 
 
@@ -309,6 +337,7 @@ def main():
     #print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
     # print(takeout(sentence))
+
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
