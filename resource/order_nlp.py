@@ -38,17 +38,22 @@ opt_dict = data
 
 def add_menu(sentence):
     try:
+        # client에게 전달할 최종 객체
         result_dict = {"order_list": [], "code": ""}
 
+        # 아니와 같은 부정어를 말하면 주문완료 code 2001 반환
         if sentence == "아니" or sentence == "아니요" or sentence == "아니오" or sentence == "다음":
             result_dict["code"] = 2001
+        # 메뉴 보여줘 : 모든 메뉴 코드 및 code 1001 반환
         elif sentence == "메뉴 보여줘":
             menu_list = list(map(int, list(menu_dict.keys())))
             result_dict = {"order_list": [
                 {"menu": menu_list, "option": [], "set": [], "qty": 0}], "code": 1001}
             return result_dict
+        # 빈 문장 : code 1002로 에러처리
         elif sentence == "":
             result_dict["code"] = 1002
+        # 주문 받기 시작
         else:
             temp_string = ""
 
@@ -56,13 +61,8 @@ def add_menu(sentence):
                 if word[1] == "NNG":
                     temp_string = temp_string + word[0]
                     print(temp_string)
-                    menu_id = utils.find_key(menu_dict, temp_string)
-                    if menu_id != None:
-                        conflict_menu_list = utils.find_menu(
-                            menu_dict, temp_string)
-                        result_dict["order_list"].append(
-                            {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
-                        temp_string = ""
+                    temp_string, result_dict = one_menu_insert(
+                        temp_string, result_dict)
 
                     if temp_string == "라지세트" or temp_string == "세트라지":
                         if int(result_dict["order_list"][-1]["menu"][0]) < 200:
@@ -86,13 +86,8 @@ def add_menu(sentence):
                     for value in menu_dict.values():
                         if value in temp_string:
                             print(value)
-                            menu_id = utils.find_key(menu_dict, value)
-                            if menu_id != None:
-                                conflict_menu_list = utils.find_menu(
-                                    menu_dict, value)
-                                result_dict["order_list"].append(
-                                    {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
-                                temp_string = ""
+                            temp_string, result_dict = one_menu_insert(
+                                value, result_dict)
 
                 elif word[1] == "NR":
                     count = int(
@@ -109,13 +104,8 @@ def add_menu(sentence):
                 if int(result_dict["order_list"][-1]["menu"][0]) < 200:
                     result_dict["order_list"][-1]["set"] = [201, 301]
             else:
-                menu_id = utils.find_key(menu_dict, temp_string)
-                if menu_id != None:
-                    conflict_menu_list = utils.find_menu(
-                        menu_dict, temp_string)
-                    result_dict["order_list"].append(
-                        {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
-                    temp_string = ""
+                temp_string, result_dict = one_menu_insert(
+                    temp_string, result_dict)
 
             if result_dict["order_list"] != []:
                 result_dict["code"] = 1001
@@ -123,8 +113,18 @@ def add_menu(sentence):
                 result_dict["code"] = 1002
 
         return result_dict
-    except:
+    except:  # 에러 처리 code 1002
         return {"order_list": [], "code": 1002}
+
+#temp_string이 포함된 메뉴 이름들이 있는 경우 result_dict에 단품으로 추가
+def one_menu_insert(temp_string, result_dict):
+    menu_id = utils.find_key(menu_dict, temp_string)
+    if menu_id != None:
+        conflict_menu_list = utils.find_menu(menu_dict, temp_string)
+        result_dict["order_list"].append(
+            {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
+        temp_string = ""
+    return temp_string, result_dict
 
 
 # API NO.2 여러 메뉴 중 하나 선택
@@ -304,7 +304,6 @@ def main():
     #print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
     # print(takeout(sentence))
-
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
