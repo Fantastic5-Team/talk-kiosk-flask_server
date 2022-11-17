@@ -61,7 +61,7 @@ def add_menu(sentence):
                 if word[1] == "NNG":
                     temp_string = temp_string + word[0]
                     print(temp_string)
-                    temp_string, result_dict = one_menu_insert(
+                    temp_string, result_dict = menu_insert(
                         temp_string, result_dict)
 
                     if temp_string == "라지세트" or temp_string == "세트라지":
@@ -83,10 +83,13 @@ def add_menu(sentence):
                             result_dict["order_list"][-1]["menu"] = menu_temp_array
                             temp_string = temp_string.replace("라지", "")
 
+                    # 메뉴 명이 아닌 다른 명사가 들어간 경우 예외 처리
                     for value in menu_dict.values():
+                        # temp_string에 메뉴이름이 있으면
                         if value in temp_string:
                             print(value)
-                            temp_string, result_dict = one_menu_insert(
+                            # 해당 메뉴이름이 포함된 메뉴 이름들이 있는 경우 result_dict에 단품으로 추가
+                            temp_string, result_dict = menu_insert(
                                 value, result_dict)
 
                 elif word[1] == "NR":
@@ -104,7 +107,7 @@ def add_menu(sentence):
                 if int(result_dict["order_list"][-1]["menu"][0]) < 200:
                     result_dict["order_list"][-1]["set"] = [201, 301]
             else:
-                temp_string, result_dict = one_menu_insert(
+                temp_string, result_dict = menu_insert(
                     temp_string, result_dict)
 
             if result_dict["order_list"] != []:
@@ -116,8 +119,10 @@ def add_menu(sentence):
     except:  # 에러 처리 code 1002
         return {"order_list": [], "code": 1002}
 
-#temp_string이 포함된 메뉴 이름들이 있는 경우 result_dict에 단품으로 추가
-def one_menu_insert(temp_string, result_dict):
+# temp_string이 포함된 메뉴 이름들이 있는 경우 result_dict에 단품으로 추가
+
+
+def menu_insert(temp_string, result_dict):
     menu_id = utils.find_key(menu_dict, temp_string)
     if menu_id != None:
         conflict_menu_list = utils.find_menu(menu_dict, temp_string)
