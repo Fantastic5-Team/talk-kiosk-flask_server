@@ -43,9 +43,9 @@ def add_menu(sentence):
         if sentence == "아니" or sentence == "아니요" or sentence == "아니오" or sentence == "다음":
             result_dict["code"] = 2001
         elif sentence == "메뉴 보여줘":
-            menu_list = list(menu_dict.keys())
+            menu_list = list(map(int, list(menu_dict.keys())))
             result_dict = {"order_list": [
-                {"menu": menu_list, "option": [], "set": [], "qty": 0}], "code": "1001"}
+                {"menu": menu_list, "option": [], "set": [], "qty": 0}], "code": 1001}
             return result_dict
         elif sentence == "":
             result_dict["code"] = 1002
