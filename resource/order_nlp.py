@@ -72,7 +72,7 @@ def add_menu(sentence):
                         if int(result_dict["order_list"][-1]["menu"][0]) < 200:
                             result_dict["order_list"][-1]["set"] = [201, 301]
                             temp_string = temp_string.replace("세트", "")
-                            # print("여기", temp_string)
+
                     elif temp_string == "라지":
                         if int(result_dict["order_list"][-1]["menu"][0]) > 200:
                             menu_temp_array = []
@@ -82,6 +82,17 @@ def add_menu(sentence):
                                     menu_temp_array.append(menu)
                             result_dict["order_list"][-1]["menu"] = menu_temp_array
                             temp_string = temp_string.replace("라지", "")
+
+                    for value in menu_dict.values():
+                        if value in temp_string:
+                            print(value)
+                            menu_id = utils.find_key(menu_dict, value)
+                            if menu_id != None:
+                                conflict_menu_list = utils.find_menu(
+                                    menu_dict, value)
+                                result_dict["order_list"].append(
+                                    {"menu": conflict_menu_list, "option": [], "set": [], "qty": 1})
+                                temp_string = ""
 
                 elif word[1] == "NR":
                     count = int(
@@ -293,6 +304,7 @@ def main():
     #print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
     # print(takeout(sentence))
+
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
