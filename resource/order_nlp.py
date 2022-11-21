@@ -311,11 +311,11 @@ def takeout(sentence):
     try:
         takeout_code = {"code": {}}
         for v in tagger.morphs(sentence):
-            if(v == '네' or v == '맞' or v == '매장' or v == '넵' or v == '안'):  # 매장 식사 안(안에서 먹고갈게요)
+            if(v == '네' or v == '맞' or v == '매장' or v == '넵' or v == '안' or v == '먹'):  # 매장 식사 안(안에서 먹고갈게요)
                 takeout_code["code"] = 1001
                 takeout_code["isTakeout"] = False  # 매장 식사
                 return takeout_code
-            if(v == '아니' or v == '아닌데요' or v == '아님' or v == '밖' or v == '집' or v == '괜찮' or v == '테이크' or v == '아웃'):  # 부정표현
+            if(v == '아니' or v == '아닌데요' or v == '아님' or v == '밖' or v == '집' or v == '괜찮' or v == '테이크' or v == '아웃' or v == '테이크아웃'):  # 부정표현
                 takeout_code["code"] = 1001
                 takeout_code["isTakeout"] = True  # takeout
                 return takeout_code
@@ -331,12 +331,12 @@ def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
     # confilct_list = [106, 107, 108]
-    print(add_menu(sentence))
+    # print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
     #print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
-    # print(takeout(sentence))
+    print(takeout(sentence))
 
 
     ####밑에 메뉴판 표시용 conflict####
