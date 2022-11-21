@@ -315,7 +315,7 @@ def takeout(sentence):
                 takeout_code["code"] = 1001
                 takeout_code["isTakeout"] = False  # 매장 식사
                 return takeout_code
-            if(v == '아니' or v == '아닌데요' or v == '아님' or v == '밖' or v == '집' or v == '괜찮' or v == '테이크' or v == '아웃' or v == '테이크아웃'):  # 부정표현
+            if(v == '아니' or v == '아닌데요' or v == '밖' or v == '집' or v == '괜찮' or v == '테이크' or v == '아웃' or v == '테이크아웃'):  # 부정표현.
                 takeout_code["code"] = 1001
                 takeout_code["isTakeout"] = True  # takeout
                 return takeout_code
