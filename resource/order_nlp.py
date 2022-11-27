@@ -5,21 +5,21 @@ import os
 tagger = Mecab()
 
 # json 파일 불러오기
-path = os.getcwd()
+path = os.pardir
 
-with open(os.path.join(path, "talk-kiosk-flask_server", "json", "intent.json"), "r") as f:
+with open(os.path.join(path, "json", "intent.json"), "r") as f:
     data = json.load(f)
 f.close()
 
 order = data["order"]
 
-with open(os.path.join(path, "talk-kiosk-flask_server", "json", "menu-table.json"), "r") as f:
+with open(os.path.join(path, "json", "menu-table.json"), "r") as f:
     data = json.load(f)
 f.close
 
 menu_dict = data
 
-with open(os.path.join(path, "talk-kiosk-flask_server", "json", "number.json"), "r") as f:
+with open(os.path.join(path, "json", "number.json"), "r") as f:
 
     data = json.load(f)
 f.close
@@ -27,7 +27,7 @@ f.close
 num_dict = data
 
 
-with open(os.path.join(path, "talk-kiosk-flask_server", "json", "option-sel.json"), "r") as f:
+with open(os.path.join(path, "json", "option-sel.json"), "r") as f:
     data = json.load(f)
 f.close
 
