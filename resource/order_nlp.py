@@ -1,25 +1,25 @@
 from konlpy.tag import Mecab
 import json
 import utils
-
+import os
 tagger = Mecab()
 
 # json 파일 불러오기
+path = os.getcwd()
 
-
-with open("talk-kiosk-flask_server/json/intent.json", "r") as f:
+with open(os.path.join(path, "talk-kiosk-flask_server", "json", "intent.json"), "r") as f:
     data = json.load(f)
 f.close()
 
 order = data["order"]
 
-with open("talk-kiosk-flask_server/json/menu-table.json", "r") as f:
+with open(os.path.join(path, "talk-kiosk-flask_server", "json", "menu-table.json"), "r") as f:
     data = json.load(f)
 f.close
 
 menu_dict = data
 
-with open("talk-kiosk-flask_server/json/number.json", "r") as f:
+with open(os.path.join(path, "talk-kiosk-flask_server", "json", "number.json"), "r") as f:
 
     data = json.load(f)
 f.close
@@ -27,7 +27,7 @@ f.close
 num_dict = data
 
 
-with open("talk-kiosk-flask_server/json/option-sel.json", "r") as f:
+with open(os.path.join(path, "talk-kiosk-flask_server", "json", "option-sel.json"), "r") as f:
     data = json.load(f)
 f.close
 
@@ -311,11 +311,11 @@ def takeout(sentence):
     try:
         takeout_code = {"code": {}}
         for v in tagger.morphs(sentence):
-            if(v == '네' or v == '맞' or v == '매장' or v == '넵' or v == '안' or v == '먹'):  # 매장 식사 안(안에서 먹고갈게요)
+            if(v == '네' or v == '맞' or v == '매장' or v == '넵' or v == '안'):  # 매장 식사 안(안에서 먹고갈게요)
                 takeout_code["code"] = 1001
                 takeout_code["isTakeout"] = False  # 매장 식사
                 return takeout_code
-            if(v == '아니' or v == '아닌데요' or v == '아님' or v == '밖' or v == '아니' or v == '괜찮' or v == '테이크' or v == '아웃' or v == '테이크아웃'):  # 부정표현.
+            if(v == '아니' or v == '아닌데요' or v == '아님' or v == '밖' or v == '집' or v == '괜찮' or v == '테이크' or v == '아웃'):  # 부정표현
                 takeout_code["code"] = 1001
                 takeout_code["isTakeout"] = True  # takeout
                 return takeout_code
@@ -331,13 +331,12 @@ def main():
     sentence = input("sentence > ")
     print(tagger.pos(sentence))
     # confilct_list = [106, 107, 108]
-    # print(add_menu(sentence))
+    print(add_menu(sentence))
     #print(conflict_menu_select(sentence, confilct_list))
     # select_option(sentence)
     #print(set_check(sentence, [201, 301]))
     # print(confirm(sentence))
-    print(takeout(sentence))
-
+    # print(takeout(sentence))
 
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
