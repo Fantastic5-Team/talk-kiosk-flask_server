@@ -7,19 +7,19 @@ tagger = Mecab()
 # json 파일 불러오기
 
 
-with open("/home/workspace/talk-kiosk-flask_server/json/intent.json", "r") as f:
+with open("talk-kiosk-flask_server/json/intent.json", "r") as f:
     data = json.load(f)
 f.close()
 
 order = data["order"]
 
-with open("/home/workspace/talk-kiosk-flask_server/json/menu-table.json", "r") as f:
+with open("talk-kiosk-flask_server/json/menu-table.json", "r") as f:
     data = json.load(f)
 f.close
 
 menu_dict = data
 
-with open("/home/workspace/talk-kiosk-flask_server/json/number.json", "r") as f:
+with open("talk-kiosk-flask_server/json/number.json", "r") as f:
 
     data = json.load(f)
 f.close
@@ -27,7 +27,7 @@ f.close
 num_dict = data
 
 
-with open("/home/workspace/talk-kiosk-flask_server/json/option-sel.json", "r") as f:
+with open("talk-kiosk-flask_server/json/option-sel.json", "r") as f:
     data = json.load(f)
 f.close
 
