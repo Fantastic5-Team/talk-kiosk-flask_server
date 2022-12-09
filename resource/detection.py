@@ -35,7 +35,7 @@ def detection(base64_string):
     # Detecting objects
     blob = cv2.dnn.blobFromImage(img, 0.00392, (416, 416), (0, 0, 0), True, crop=False) #for slow 320, 320 middle 416, 517
     net.setInput(blob)
-    outs = net.forward(output_layers) #여기가 문제이구만
+    outs = net.forward(output_layers) 
 
 
 
@@ -84,7 +84,6 @@ def detection(base64_string):
         result_dict["code"] = 3001
 
     return result_dict
-    # outputImg = img[y:y+h, x:x+w] #cut the image with detection result
     # cv2.imshow("Image", img)
     # cv2.imshow("output",outputImg)
     # cv2.waitKey(0)
