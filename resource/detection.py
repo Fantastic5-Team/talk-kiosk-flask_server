@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import json
 import base64
 import io
 from PIL import Image
@@ -12,7 +13,7 @@ def stringToRGB(base64_string):
     img = Image.open(dataBytesIO)
     return cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
 
-def detection(base64_string):
+def detection(base64_json):
     result_dict = {"code":3000}
     # Yolo 로드
     net = cv2.dnn.readNet(weightsFile_mpi, "/image_detection/yolov3.cfg")
@@ -28,6 +29,7 @@ def detection(base64_string):
     # 이미지 가져오기
     #img = stringToRGB(b64_string)
     # img = cv2.imread("/home/workspace/talk-kiosk-flask_server/resource/018.jpeg") #to decode erase this line
+    base64_string = json.loads(base64_json)
     img = stringToRGB(base64_string)
     img = cv2.resize(img, None, fx=0.4, fy=0.4)
     height, width, channels = img.shape
