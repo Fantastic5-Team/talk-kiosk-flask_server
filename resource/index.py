@@ -57,6 +57,11 @@ def post_nlp_takeout():
     print(result)
     return jsonify(result)
 
+@app.route('/detection', methods=['POST'])
+def post_nlp_detection():
+    data = request.get_json()
+    result = nlp.set_check(data["text"])
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(port=8000, debug=False)
