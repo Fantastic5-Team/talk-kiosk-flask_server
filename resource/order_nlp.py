@@ -38,7 +38,7 @@ def add_menu(sentence):
         if sentence == "아니" or sentence == "아니요" or sentence == "아니오" or sentence == "다음":
             result_dict["code"] = 2001
         # 메뉴 보여줘 : 모든 메뉴 코드 및 code 1001 반환
-        elif sentence == "메뉴 보여줘":
+        elif sentence == "메뉴 보여 줘":
             menu_list = list(map(int, list(menu_dict.keys())))
             result_dict = {"order_list": [
                 {"menu": menu_list, "option": [], "set": [], "qty": 0}], "code": 1001}
@@ -334,4 +334,4 @@ def main():
     ####밑에 메뉴판 표시용 conflict####
     # conflict_list = [101,102,103,104,105,106,107,108,109,110,111,112,113,201,202,203,204,205,301,302,303,304,305,306,307]#모든 메뉴충돌
     # conflict_list = [201,202,203,204,205,301,302,303,304,305,306,307]#사이드 메뉴만 충돌
-main()
+# main()
